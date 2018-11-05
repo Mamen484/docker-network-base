@@ -1,0 +1,90 @@
+version: "3.1"
+services:
+  elasticsearch:
+    image: elasticsearch:2.4-alpine
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - sf_network
+    volumes:
+      - "$PWD/data/elasticsearch:/usr/share/elasticsearch/data"
+    environment:
+      - "discovery.type:single-node"
+    expose:
+      - 9200
+    ports:
+      - "8004:9200"
+    labels:
+      traefik.frontend.rule: "Host:es.shopping-feed.lan"
+      traefik.frontend.entryPoints: "http"
+      traefik.backend: "elasticsearch"
+      traefik.protocol: "http"
+      traefik.port: "9200"
+      traefik.docker.network: "sf_network"
+
+  rabbitmq:
+    image: rabbitmq:3.7-management-alpine
+    networks:
+      - sf_network
+    volumes:
+      - "$PWD/data/rabbitmq:/var/lib/rabbitmq"
+    expose:
+      - 5672
+    ports:
+      - "8001:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "admin"
+    labels:
+      traefik.frontend.rule: "Host:rbmq.shopping-feed.lan"
+      traefik.frontend.entryPoints: "http"
+      traefik.backend: "rabbitmq"
+      traefik.protocol: "http"
+      traefik.port: "15672"
+      traefik.docker.network: "sf_network"
+
+  redis:
+    image: redis:4.0-alpine
+    ports:
+      - "8002:6379"
+    expose:
+      - 6379
+    networks:
+      - sf_network
+    volumes:
+      - "$PWD/data/redis:/data"
+    labels:
+      traefik.enable: "false"
+
+  mongodb:
+    image: mongo:3.2
+    ports:
+      - "8003:27017"
+    expose:
+      - 27017
+    networks:
+      - sf_network
+    volumes:
+      - "$PWD/data/mongodb:/data/db"
+    labels:
+      traefik.enable: "false"
+
+  traefik:
+    image: traefik
+    networks:
+      - sf_network
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "$PWD/conf/traefik.toml:/traefik.toml"
+    command: --web --docker --logLevel=INFO
+    expose:
+      - 80
+    ports:
+      - "80:80"
+      - "8080:8080"
+
+networks:
+  sf_network:
+    external: true
