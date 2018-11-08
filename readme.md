@@ -8,7 +8,7 @@ First, the shopping-feed network must be created.
 In order to avoid local prefix, lets create it manually
 
 ```bash
-network create --driver bridge sf_network
+docker network create --driver bridge sf_network
 ```
 
 Once done, you can start the stack
