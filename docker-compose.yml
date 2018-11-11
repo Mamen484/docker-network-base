@@ -9,7 +9,7 @@ services:
     networks:
       - sf_network
     volumes:
-      - "$PWD/data/elasticsearch:/usr/share/elasticsearch/data"
+      - "./data/elasticsearch:/usr/share/elasticsearch/data:delegated"
     environment:
       - "discovery.type:single-node"
     expose:
@@ -18,9 +18,7 @@ services:
       - "8004:9200"
     labels:
       traefik.frontend.rule: "Host:es.shopping-feed.lan"
-      traefik.frontend.entryPoints: "http"
       traefik.backend: "elasticsearch"
-      traefik.protocol: "http"
       traefik.port: "9200"
       traefik.docker.network: "sf_network"
 
@@ -29,7 +27,7 @@ services:
     networks:
       - sf_network
     volumes:
-      - "$PWD/data/rabbitmq:/var/lib/rabbitmq"
+      - "./data/rabbitmq:/var/lib/rabbitmq:delegated"
     expose:
       - 5672
     ports:
@@ -39,9 +37,7 @@ services:
       RABBITMQ_DEFAULT_PASS: "admin"
     labels:
       traefik.frontend.rule: "Host:rbmq.shopping-feed.lan"
-      traefik.frontend.entryPoints: "http"
       traefik.backend: "rabbitmq"
-      traefik.protocol: "http"
       traefik.port: "15672"
       traefik.docker.network: "sf_network"
 
@@ -54,7 +50,12 @@ services:
     networks:
       - sf_network
     volumes:
-      - "$PWD/data/redis:/data"
+      - "./conf/redis:/etc/redis"
+      - "./logs/redis:/var/log/redis:delegated"
+      - "./data/redis:/data:delegated"
+    command:
+      - "redis-server"
+      - "/etc/redis/redis.conf"
     labels:
       traefik.enable: "false"
 
@@ -67,7 +68,7 @@ services:
     networks:
       - sf_network
     volumes:
-      - "$PWD/data/mongodb:/data/db"
+      - "./data/mongodb:/data/db:delegated"
     labels:
       traefik.enable: "false"
 
@@ -77,13 +78,29 @@ services:
       - sf_network
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "$PWD/conf/traefik.toml:/traefik.toml"
+      - "./conf/traefik.toml:/traefik.toml:cached"
     command: --web --docker --logLevel=INFO
     expose:
       - 80
     ports:
       - "80:80"
       - "8080:8080"
+
+  mariadb:
+    image: mariadb:10.3.10
+    volumes:
+      - "./conf/mysql:/etc/mysql/conf.d:cached"
+      - "./data/mysql:/var/lib/mysql:delegated"
+      - "./logs/mysql:/var/log/mysql:delegated"
+    ports:
+      - "8005:3306"
+    expose:
+      - 3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: shopping_feed
+    labels:
+      traefik.enable: "false"
 
 networks:
   sf_network:
