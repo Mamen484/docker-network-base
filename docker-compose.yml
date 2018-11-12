@@ -87,6 +87,8 @@ services:
 
   mariadb:
     image: mariadb:10.3.10
+    networks:
+      - sf_network
     volumes:
       - "./conf/mysql:/etc/mysql/conf.d:cached"
       - "./data/mysql:/var/lib/mysql:delegated"
