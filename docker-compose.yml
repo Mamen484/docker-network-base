@@ -1,4 +1,4 @@
-version: "3.1"
+version: "3"
 services:
   elasticsearch:
     image: elasticsearch:2.4-alpine
@@ -51,7 +51,6 @@ services:
       - sf_network
     volumes:
       - "./conf/redis:/etc/redis"
-      - "./logs/redis:/var/log/redis:delegated"
       - "./data/redis:/data:delegated"
     command:
       - "redis-server"
