@@ -88,6 +88,8 @@ This will make your app accessible at http://api.shoppingfeed.lan on host machin
 
 To get more informations about how to use traefik, check https://docs.traefik.io/basics/
 
+You can also check available options for docker-compose integration here https://docs.traefik.io/configuration/backends/docker/#using-docker-compose, and an API microservice configuration example with billing application and url path matching here https://github.com/shoppingflux/app-billing/blob/master/docker-compose.yml#L17
+
 ### RabbitMQ
 
 #### Docker network
