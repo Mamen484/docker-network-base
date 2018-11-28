@@ -2,6 +2,8 @@
 
 The docker-compose file contains basic stack to connect to when dealing with apps.
 
+![alt text](https://i.ibb.co/FK2CK4f/docker-network.png)
+
 ## Getting started
 
 First, the shopping-feed network must be created.
@@ -25,9 +27,9 @@ docker network inspect sf_network
 
 ## Connect to the network
 
-In order to connect your app to the network, you must record `sf_network` and explicitly link your containers to it
+In order to connect your project to the network, you must record `sf_network` and explicitly link your containers to it
 
-Example of basic declaration for the API app
+Example of basic declaration for the API project found in [docker-compose.yml file](https://github.com/shoppingflux/api/blob/master/docker-compose.yml)
 
 ```yaml
 version: "3"
