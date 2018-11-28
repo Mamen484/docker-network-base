@@ -84,7 +84,9 @@ networks:
     external: true
 ```
 
-This will make your app accessible at http://api.shoppingfeed.lan on host machine
+This will make your app accessible at http://api.shoppingfeed.lan on host machine.
+
+To get more informations about how to use traefik, check https://docs.traefik.io/basics/
 
 ### RabbitMQ
 
