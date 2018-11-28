@@ -6,17 +6,29 @@ The docker-compose file contains basic stack to connect to when dealing with app
 
 ## Getting started
 
-First, the shopping-feed network must be created.
+First, the shopping-feed [docker network](https://docs.docker.com/network/) must be created to make it available to other docker instances.
 In order to avoid local prefix, lets create it manually
 
 ```bash
 docker network create --driver bridge sf_network
 ```
 
-Once done, you can start the stack
+Once done, you can start the entire stack
 
 ```bash
 docker-compose up -d
+```
+
+Note that you can selective boot some of services, like that
+
+```bash
+docker-compose up -d mariadb redis
+```
+
+At any moment, if you need a new service, boot it, it will join the network automatically and connect to already running services
+
+```bash
+docker-compose up -d mongodb
 ```
 
 Network can be inspected with the following command
@@ -27,7 +39,8 @@ docker network inspect sf_network
 
 ## Connect to the network
 
-In order to connect your project to the network, you must record `sf_network` and explicitly link your containers to it
+In order to connect your project to the network, you must record `sf_network` and explicitly link your containers to it.
+By doing this, all containers as a part of the network became available for your project
 
 Example of basic declaration for the API project found in [docker-compose.yml file](https://github.com/shoppingflux/api/blob/master/docker-compose.yml)
 
