@@ -4,6 +4,50 @@ The docker-compose file contains basic stack to connect to when dealing with app
 
 ![alt text](https://i.ibb.co/FK2CK4f/docker-network.png)
 
+## Prerequisit
+
+First you need to login into AWS to be able to retrieve sf docker images.
+
+### Get access to AWS Container Registry (ECR)
+
+1. Create AWS Credentials and Config file
+
+```
+# ~/.aws/credentials
+[default]
+aws_access_key_id=<id>
+aws_secret_access_key=<access_key>
+
+# ~/.aws/config
+[default]
+region=eu-west-1
+output=json
+```
+
+2. Login
+
+On a OSx machine:
+```bash
+$ brew install awscli   # install aws cli
+$ $(aws ecr get-login --no-include-email)  # log into ECR
+```
+
+On a Linux machine:
+```bash
+$ pip install awscli --upgrade --user   # install aws cli
+$ $(aws ecr get-login --no-include-email)  # log into ECR
+```
+
+### Install docker and docker compose
+
+Refer to official doc :
+ - docker : https://docs.docker.com/install/linux/docker-ce/ubuntu/
+ - docker-compose : https://docs.docker.com/compose/install/
+
+### Troubleshoot
+
+If you have error about binaries not found you might need to add `~/.local/bin` to your `$PATH` variable. 
+
 ## Getting started
 
 First, the shopping-feed [docker network](https://docs.docker.com/network/) must be created to make it available to other docker instances.
