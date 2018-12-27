@@ -48,6 +48,12 @@ Refer to official doc :
 
 If you have error about binaries not found you might need to add `~/.local/bin` to your `$PATH` variable. 
 
+If you have issues while sending request to an external API (request hanging and finally time out) you must create the network with a lower mtu value :
+
+```bash
+docker network create --opt com.docker.network.driver.mtu=1400 --driver bridge sf_network
+```
+
 ## Getting started
 
 First, the shopping-feed [docker network](https://docs.docker.com/network/) must be created to make it available to other docker instances.
