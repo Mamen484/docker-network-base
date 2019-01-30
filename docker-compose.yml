@@ -77,7 +77,7 @@ services:
       - sf_network
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./conf/traefik.toml:/traefik.toml:cached"
+      - "./conf/${TRAEFIK_CONF}:/traefik.toml:cached"
       - "./conf/shopping-feed.lan.crt:/shopping-feed.lan.crt:cached"
       - "./conf/shopping-feed.lan.key:/shopping-feed.lan.key:cached"
     command: --web --docker --logLevel=INFO
