@@ -21,6 +21,7 @@ services:
       traefik.backend: "elasticsearch"
       traefik.port: "9200"
       traefik.docker.network: "sf_network"
+      traefik.enable: "true"
 
   rabbitmq:
     image: rabbitmq:3.7-management-alpine
@@ -40,6 +41,7 @@ services:
       traefik.backend: "rabbitmq"
       traefik.port: "15672"
       traefik.docker.network: "sf_network"
+      traefik.enable: "true"
 
   redis:
     image: redis:4.0-alpine
@@ -55,8 +57,6 @@ services:
     command:
       - "redis-server"
       - "/etc/redis/redis.conf"
-    labels:
-      traefik.enable: "false"
 
   mongo:
     image: mongo:3.2
@@ -68,8 +68,6 @@ services:
       - sf_network
     volumes:
       - "./data/mongodb:/data/db:delegated"
-    labels:
-      traefik.enable: "false"
 
   traefik:
     image: traefik
@@ -77,11 +75,15 @@ services:
       - sf_network
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./conf/traefik.toml:/traefik.toml:cached"
-    command: --web --docker --logLevel=INFO
+      - "./conf/traefik/traefik.toml:/etc/traefik/traefik.toml"
+      - "./conf/traefik/shopping-feed.lan.crt:/etc/traefik/shopping-feed.lan.crt"
+      - "./conf/traefik/shopping-feed.lan.key:/etc/traefik/shopping-feed.lan.key"
+    command: --api --logLevel=DEBUG
     expose:
       - 80
+      - 443
     ports:
+      - "443:443"
       - "80:80"
       - "8080:8080"
 
@@ -90,7 +92,7 @@ services:
     networks:
       - sf_network
     volumes:
-      - "./conf/mysql:/etc/mysql/conf.d:cached"
+      - "./conf/mysql:/etc/mysql/conf.d"
       - "./data/mysql:/var/lib/mysql:delegated"
       - "./logs/mysql:/var/log/mysql:delegated"
     ports:
@@ -100,8 +102,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: shopping_feed
-    labels:
-      traefik.enable: "false"
 
 networks:
   sf_network:

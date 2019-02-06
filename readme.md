@@ -44,16 +44,6 @@ Refer to official doc :
  - docker : https://docs.docker.com/install/linux/docker-ce/ubuntu/
  - docker-compose : https://docs.docker.com/compose/install/
 
-### Troubleshoot
-
-If you have error about binaries not found you might need to add `~/.local/bin` to your `$PATH` variable. 
-
-If you have issues while sending request to an external API (request hanging and finally time out) you must create the network with a lower mtu value :
-
-```bash
-docker network create --opt com.docker.network.driver.mtu=1400 --driver bridge sf_network
-```
-
 ## Getting started
 
 First, the shopping-feed [docker network](https://docs.docker.com/network/) must be created to make it available to other docker instances.
@@ -87,6 +77,17 @@ Network can be inspected with the following command
 docker network inspect sf_network
 ```
 
+### Troubleshoot
+
+If you have error about binaries not found you might need to add `~/.local/bin` to your `$PATH` variable. 
+
+If you have issues while sending request to an external API (request hanging and finally time out) you must create the network with a lower mtu value :
+
+```bash
+docker network create --opt com.docker.network.driver.mtu=1400 --driver bridge sf_network
+```
+
+
 ## Connect to the network
 
 In order to connect your project to the network, you must record `sf_network` and explicitly link your containers to it.
@@ -117,10 +118,16 @@ The stack by default connect itself to the `sf_network`
 
 ### Traefik
 
-Traefik is the http router installed into the stack and is configured to expose http services on the host port `80`
+Traefik is the http router installed into the stack and is configured to expose http services on both host ports `80` and `443` by default.
 
 - http applications: http://{domain}:80
+- https applications: https://{domain}:443
 - http dashboard: http://localhost:8080
+
+#### Use https
+
+Https must 
+
 
 #### Configuration
 
@@ -135,12 +142,16 @@ services:
     networks:
       - sf_network
     labels:
+      # Enable traefik to create front and backend
+      traefik.enable: "true"
       # define a hostname for your frontend service
       traefik.frontend.rule: "Host:api.shopping-feed.lan"
-      # define the backend name`
+      # Optionally define the backend name
       traefik.backend: "api"
       # define the network that the backend belongs to
       traefik.docker.network: "sf_network"
+      # If you want only expose the service for http (or https)
+      traefik.frontend.entryPoints: "http"
 
 networks:
   sf_network:
@@ -151,7 +162,9 @@ This will make your app accessible at http://api.shoppingfeed.lan on host machin
 
 To get more informations about how to use traefik, check https://docs.traefik.io/basics/
 
-You can also check available options for docker-compose integration here https://docs.traefik.io/configuration/backends/docker/#using-docker-compose, and an API microservice configuration example with billing application and url path matching here https://github.com/shoppingflux/app-billing/blob/master/docker-compose.yml#L17
+You can also check available options for docker-compose integration here : https://docs.traefik.io/configuration/backends/docker/#using-docker-compose
+
+An API microservice configuration example with billing application and url path matching here : https://github.com/shoppingflux/app-billing/blob/master/docker-compose.yml#L17
 
 ### RabbitMQ
 
