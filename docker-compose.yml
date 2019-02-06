@@ -78,7 +78,7 @@ services:
       - "./conf/traefik/traefik.toml:/etc/traefik/traefik.toml"
       - "./conf/traefik/shopping-feed.lan.crt:/etc/traefik/shopping-feed.lan.crt"
       - "./conf/traefik/shopping-feed.lan.key:/etc/traefik/shopping-feed.lan.key"
-    command: --api --logLevel=DEBUG
+    command: --api --logLevel=INFO
     expose:
       - 80
       - 443
