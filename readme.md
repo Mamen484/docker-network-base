@@ -12,7 +12,27 @@ First you need to login into AWS to be able to retrieve sf docker images.
 
 1. Create AWS Credentials and Config file
 
-```
+First install AWS Cli :
+
+On a OSx machine:
+```bash
+$ brew install awscli   # install aws cli
+``````
+   
+On a Linux machine:
+```bash
+$ pip install awscli --upgrade --user   # install aws cli
+``````
+Then configure credentials
+
+```bash
+$ aws configure
+1- Enter AWS Access Key ID 
+2- Enter AWS Secret Access Key
+3- Region: eu-west-1
+4- output: json
+
+It wil generate those 2 files in ~/.aws:
 # ~/.aws/credentials
 [default]
 aws_access_key_id=<id>
@@ -26,15 +46,7 @@ output=json
 
 2. Login
 
-On a OSx machine:
-```bash
-$ brew install awscli   # install aws cli
-$ $(aws ecr get-login --no-include-email)  # log into ECR
 ```
-
-On a Linux machine:
-```bash
-$ pip install awscli --upgrade --user   # install aws cli
 $ $(aws ecr get-login --no-include-email)  # log into ECR
 ```
 
