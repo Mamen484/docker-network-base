@@ -1,7 +1,7 @@
 version: "3"
 services:
   elasticsearch:
-    image: elasticsearch:2.4-alpine
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
     ulimits:
       memlock:
         soft: -1
