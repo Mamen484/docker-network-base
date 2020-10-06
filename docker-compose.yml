@@ -2,6 +2,7 @@ version: "3"
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+    container_name: elasticsearch
     ulimits:
       memlock:
         soft: -1
@@ -11,7 +12,7 @@ services:
     volumes:
       - "./data/elasticsearch:/usr/share/elasticsearch/data:delegated"
     environment:
-      - "discovery.type:single-node"
+      - discovery.type=single-node
     expose:
       - 9200
     ports:
