@@ -219,6 +219,20 @@ An API microservice configuration example with billing application and url path 
 - port forwarding: `8004: 9200`
 - http access: `http://es.shopping-feed.lan`
 
+### Kibana
+
+#### Docker network
+
+- host: kibana
+- port: 5601
+- user: N/A
+- pass: N/A
+
+#### Host machine
+
+- port forwarding: `8006:5601`
+- http access: `http://kibana.shopping-feed.lan`
+
 ### MongoDB
 
 #### Docker network
