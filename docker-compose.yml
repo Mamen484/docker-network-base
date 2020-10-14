@@ -1,5 +1,19 @@
 version: "3"
 services:
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.9.2
+    networks:
+      - sf_network
+    expose:
+      - 5601
+    ports:
+      - "8006:5601"
+    labels:
+      traefik.frontend.rule: "Host:kibana.shopping-feed.lan"
+      traefik.backend: "kibana"
+      traefik.port: "5601"
+      traefik.docker.network: "sf_network"
+      traefik.enable: "true"
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
     container_name: elasticsearch
