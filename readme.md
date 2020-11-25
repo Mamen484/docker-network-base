@@ -4,51 +4,6 @@ The docker-compose file contains basic stack to connect to when dealing with app
 
 ![alt text](https://i.ibb.co/FK2CK4f/docker-network.png)
 
-## Prerequisit
-
-First you need to login into AWS to be able to retrieve sf docker images.
-
-### Get access to AWS Container Registry (ECR)
-
-1. Create AWS Credentials and Config file
-
-First install AWS Cli :
-
-On a OSx machine:
-```bash
-$ brew install awscli   # install aws cli
-``````
-   
-On a Linux machine:
-```bash
-$ pip install awscli --upgrade --user   # install aws cli
-``````
-Then configure credentials
-
-```bash
-$ aws configure
-1- Enter AWS Access Key ID 
-2- Enter AWS Secret Access Key
-3- Region: eu-west-1
-4- output: json
-
-It wil generate those 2 files in ~/.aws:
-# ~/.aws/credentials
-[default]
-aws_access_key_id=<id>
-aws_secret_access_key=<access_key>
-
-# ~/.aws/config
-[default]
-region=eu-west-1
-output=json
-```
-
-2. Login
-
-```
-$ $(aws ecr get-login --no-include-email)  # log into ECR
-```
 
 ### Install docker and docker compose
 
