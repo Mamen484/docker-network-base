@@ -10,6 +10,11 @@ The docker-compose file contains basic stack to connect to when dealing with app
 Refer to official doc :
  - docker : https://docs.docker.com/install/linux/docker-ce/ubuntu/
  - docker-compose : https://docs.docker.com/compose/install/
+ 
+## Register github package
+
+- Create a personal access token as described in github documentation : https://docs.github.com/en/packages/guides/pushing-and-pulling-docker-images#authenticating-to-github-container-registry
+- Then apply step 2 & 3 in order to sign in to the GitHub Container Registry service.   
 
 ## Getting started
 

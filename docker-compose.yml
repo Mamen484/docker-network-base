@@ -74,7 +74,7 @@ services:
       - "/etc/redis/redis.conf"
 
   mongo:
-    image: mongo:3.2
+    image: mongo:3.0.2
     ports:
       - "8003:27017"
     expose:
@@ -103,7 +103,7 @@ services:
       - "8080:8080"
 
   mariadb:
-    image: mariadb:10.3.10
+    image: ghcr.io/shoppingflux/mariadb:latest
     networks:
       - sf_network
     volumes:
