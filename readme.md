@@ -19,11 +19,18 @@ Refer to official doc :
 ## Getting started
 
 First, the shopping-feed [docker network](https://docs.docker.com/network/) must be created to make it available to other docker instances.
-In order to avoid local prefix, lets create it manually
+In order to avoid local prefixes, lets create it manually
 
 ```bash
-docker network create --driver bridge sf_network
+docker network create --driver bridge --subnet=170.10.0.0/16 --ip-range=170.10.5.0/24 sf_network
 ```
+
+Note that every containers in this network declare or acquire an ipv4 address from 170.10.5.0 to 170.10.5.255.
+
+By convention, ip ranges are reserved as following :
+
+- 170.10.5.0 -> 170.10.5.99 : infrastructure services (databases, load-balancer... etc)
+- 170.10.5.100 -> 170.10.5.199 : shoppingfeed applications
 
 Once done, you can start the entire stack
 
@@ -59,24 +66,31 @@ If you have issues while sending request to an external API (request hanging and
 docker network create --opt com.docker.network.driver.mtu=1400 --driver bridge sf_network
 ```
 
-
 ## Connect to the network
 
 In order to connect your project to the network, you must record `sf_network` and explicitly link your containers to it.
-By doing this, all containers as a part of the network became available for your project
+By doing this, all containers as a part of the network became available for your project.
+
+If the container has to be accessed from another one (ie: api application, used by legacy app), you must specify
+
+- container_name : By convention, declared with vendor prefix "sfeed.". Example : `sfeed.api.web`
+- networks.sf_network.ipv4_address : Service static IP, see network chapter above for ip conventions.
 
 Example of basic declaration for the API project found in [docker-compose.yml file](https://github.com/shoppingflux/api/blob/master/docker-compose.yml)
 
 ```yaml
 version: "3"
 services:
-  app_api:
+  app_api:  
+    # Makes the container available to that domain name
+    container_name: sfeed.api.web
     image: "shoppingfeed:api"
     volumes:
     - "$PWD:/var/www"
     # This will add the container and allow other containers access
     networks:
-      - sf_network
+      sf_network:
+        ipv4_address: "170.10.5.100"
 
 # Declare pre-existing network
 networks:
@@ -95,11 +109,8 @@ Traefik is the http router installed into the stack and is configured to expose 
 - http applications: http://{domain}:80
 - https applications: https://{domain}:443
 - http dashboard: http://localhost:8080
-
-#### Use https
-
-Https must 
-
+- network ip: 170.10.5.15
+- container name: sfeed.traefik
 
 #### Configuration
 
@@ -110,16 +121,18 @@ you can configure it like following in the docker-compose file (the example use 
 version: "3"
 services:
   app:
+    container_name: sfeed.api.web
     image: "shoppingfeed:api"
     networks:
-      - sf_network
+      sf_network:
+        - ipv4_address: "170.10.5.100"
     labels:
       # Enable traefik to create front and backend
       traefik.enable: "true"
       # define a hostname for your frontend service
       traefik.frontend.rule: "Host:api.shopping-feed.lan"
       # Optionally define the backend name
-      traefik.backend: "api"
+      traefik.backend: "sfeed.api.web"
       # define the network that the backend belongs to
       traefik.docker.network: "sf_network"
       # If you want only expose the service for http (or https)
@@ -132,7 +145,7 @@ networks:
 
 This will make your app accessible at http://api.shoppingfeed.lan on host machine.
 
-To get more informations about how to use traefik, check https://docs.traefik.io/basics/
+To get more information about how to use traefik, check https://docs.traefik.io/basics/
 
 You can also check available options for docker-compose integration here : https://docs.traefik.io/configuration/backends/docker/#using-docker-compose
 
@@ -142,7 +155,8 @@ An API microservice configuration example with billing application and url path 
 
 #### Docker network
 
-- host: rabbitmq
+- ip: 170.10.5.12
+- host: sfeed.rabbitmq
 - port: 5672
 - user: admin
 - pass: root
@@ -156,7 +170,8 @@ An API microservice configuration example with billing application and url path 
 
 #### Docker network
 
-- host: redis
+- ip: 170.10.5.13
+- host: sfeed.redis
 - port: 6379
 - user: N/A
 - pass: N/A
@@ -169,7 +184,8 @@ An API microservice configuration example with billing application and url path 
 
 #### Docker network
 
-- host: elasticseach
+- ip: 170.10.5.11
+- host: sfeed.elasticsearch
 - port: 9200
 - user: N/A
 - pass: N/A
@@ -183,7 +199,8 @@ An API microservice configuration example with billing application and url path 
 
 #### Docker network
 
-- host: kibana
+- ip: 170.10.5.10
+- host: sfeed.kibana
 - port: 5601
 - user: N/A
 - pass: N/A
@@ -197,7 +214,8 @@ An API microservice configuration example with billing application and url path 
 
 #### Docker network
 
-- host: mongo
+- ip: 170.10.5.14
+- host: sfeed.mongodb
 - port: 27017
 - user: N/A
 - pass: N/A
@@ -210,7 +228,8 @@ An API microservice configuration example with billing application and url path 
 
 #### Docker network
 
-- host: mariadb
+- ip: 170.10.5.16
+- host: sfeed.mariadb
 - port: 3306
 - user: root
 - pass: root

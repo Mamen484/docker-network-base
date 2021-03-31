@@ -1,9 +1,11 @@
 version: "3"
 services:
   kibana:
+    container_name: sfeed.kibana
     image: docker.elastic.co/kibana/kibana:7.9.2
     networks:
-      - sf_network
+      sf_network:
+        ipv4_address: "170.10.5.10"
     expose:
       - 5601
     ports:
@@ -15,14 +17,15 @@ services:
       traefik.docker.network: "sf_network"
       traefik.enable: "true"
   elasticsearch:
+    container_name: sfeed.elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
-    container_name: elasticsearch
     ulimits:
       memlock:
         soft: -1
         hard: -1
     networks:
-      - sf_network
+      sf_network:
+        ipv4_address: "170.10.5.11"
     volumes:
       - "./data/elasticsearch:/usr/share/elasticsearch/data:delegated"
     environment:
@@ -37,11 +40,12 @@ services:
       traefik.port: "9200"
       traefik.docker.network: "sf_network"
       traefik.enable: "true"
-
   rabbitmq:
+    container_name: sfeed.rabbitmq
     image: rabbitmq:3.7-management-alpine
     networks:
-      - sf_network
+      sf_network:
+        ipv4_address: "170.10.5.12"
     volumes:
       - "./data/rabbitmq:/var/lib/rabbitmq:delegated"
     expose:
@@ -57,37 +61,40 @@ services:
       traefik.port: "15672"
       traefik.docker.network: "sf_network"
       traefik.enable: "true"
-
   redis:
+    container_name: sfeed.redis
     image: redis:6.0-alpine
     ports:
       - "8002:6379"
     expose:
       - 6379
     networks:
-      - sf_network
+      sf_network:
+        ipv4_address: "170.10.5.13"
     volumes:
       - "./conf/redis:/etc/redis"
       - "./data/redis:/data:delegated"
     command:
       - "redis-server"
       - "/etc/redis/redis.conf"
-
   mongo:
+    container_name: sfeed.mongodb
     image: mongo:3.0.2
     ports:
       - "8003:27017"
     expose:
       - 27017
     networks:
-      - sf_network
+      sf_network:
+        ipv4_address: "170.10.5.14"
     volumes:
       - "./data/mongodb:/data/db:delegated"
-
   traefik:
+    container_name: sfeed.traefik
     image: traefik:v1.7
     networks:
-      - sf_network
+      sf_network:
+        ipv4_address: "170.10.5.15"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./conf/traefik/traefik.toml:/etc/traefik/traefik.toml"
@@ -101,11 +108,12 @@ services:
       - "443:443"
       - "80:80"
       - "8080:8080"
-
   mariadb:
+    container_name: sfeed.mariadb
     image: ghcr.io/shoppingflux/mariadb:latest
     networks:
-      - sf_network
+      sf_network:
+        ipv4_address: "170.10.5.16"
     volumes:
       - "./conf/mysql:/etc/mysql/conf.d"
       - "./data/mysql:/var/lib/mysql:delegated"
@@ -117,7 +125,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: shopping_feed
-
 networks:
   sf_network:
     external: true
