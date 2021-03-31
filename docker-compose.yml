@@ -37,7 +37,6 @@ services:
       traefik.port: "9200"
       traefik.docker.network: "sf_network"
       traefik.enable: "true"
-
   rabbitmq:
     image: rabbitmq:3.7-management-alpine
     networks:
@@ -57,7 +56,6 @@ services:
       traefik.port: "15672"
       traefik.docker.network: "sf_network"
       traefik.enable: "true"
-
   redis:
     image: redis:6.0-alpine
     ports:
@@ -72,7 +70,6 @@ services:
     command:
       - "redis-server"
       - "/etc/redis/redis.conf"
-
   mongo:
     image: mongo:3.0.2
     ports:
@@ -83,7 +80,6 @@ services:
       - sf_network
     volumes:
       - "./data/mongodb:/data/db:delegated"
-
   traefik:
     image: traefik:v1.7
     networks:
@@ -101,7 +97,6 @@ services:
       - "443:443"
       - "80:80"
       - "8080:8080"
-
   mariadb:
     image: ghcr.io/shoppingflux/mariadb:latest
     networks:
@@ -117,7 +112,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: shopping_feed
-
 networks:
   sf_network:
     external: true
