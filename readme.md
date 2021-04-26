@@ -239,6 +239,18 @@ An API microservice configuration example with billing application and url path 
 
 - port forwarding: `8005:3306`
 
+### S3 server
 
+#### Docker network
 
- 
+- ip: 170.10.5.17
+- host: sfeed.s3
+- port: 9000
+- user: admin
+- pass: admin
+
+#### Host machine
+
+- port forwarding: `8007:9000`
+- http access: `http://s3.shopping-feed.lan`
+- files are stored in `./data/s3/*` folders (* are buckets names)
