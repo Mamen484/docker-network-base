@@ -125,6 +125,28 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: shopping_feed
+  s3:
+    container_name: sfeed.s3
+    image: minio/minio
+    command: server /data
+    networks:
+      sf_network:
+        ipv4_address: "170.10.5.17"
+    volumes:
+      - "./data/s3:/data:delegated"
+    ports:
+      - "8007:9000"
+    expose:
+      - 9000
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password
+    labels:
+      traefik.frontend.rule: "Host:s3.shopping-feed.lan"
+      traefik.backend: "sfeed.s3"
+      traefik.port: "9000"
+      traefik.docker.network: "sf_network"
+      traefik.enable: "true"
 networks:
   sf_network:
     external: true
